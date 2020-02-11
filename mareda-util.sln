@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1000
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "mareda-util", "mareda-util\mareda-util.njsproj", "{1AA07EA0-6FF8-415C-83C3-C2294C50B5B9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1AA07EA0-6FF8-415C-83C3-C2294C50B5B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AA07EA0-6FF8-415C-83C3-C2294C50B5B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AA07EA0-6FF8-415C-83C3-C2294C50B5B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AA07EA0-6FF8-415C-83C3-C2294C50B5B9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {62A0324C-BD14-4BD1-BBD3-CC8F9F8DC08E}
+	EndGlobalSection
+EndGlobal

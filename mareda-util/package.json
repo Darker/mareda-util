@@ -1,0 +1,9 @@
+{
+  "name": "mareda-util",
+  "version": "0.0.0",
+  "description": "mareda-util",
+  "main": "app.js",
+  "author": {
+    "name": ""
+  }
+}
