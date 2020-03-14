@@ -29,7 +29,25 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Compile Include="DOM\FindElement.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="events\EventThrottler.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="iterators\HelperGenerators.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="iterators\SmartIterable.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="promises\DocumentReady.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="promises\Timeout.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\Konami.js">
       <SubType>Code</SubType>
     </Compile>
     <Content Include="package.json" />
@@ -37,6 +55,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="iterators\" />
+    <Folder Include="NewFolder1\" />
+    <Folder Include="DOM\" />
+    <Folder Include="events\" />
+    <Folder Include="UI\" />
+    <Folder Include="promises\" />
+    <Folder Include="promises\fs\" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
