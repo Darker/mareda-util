@@ -38,6 +38,9 @@
     <Compile Include="iterators\HelperGenerators.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="iterators\RemovableIterator.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="iterators\SmartIterable.js">
       <SubType>Code</SubType>
     </Compile>
