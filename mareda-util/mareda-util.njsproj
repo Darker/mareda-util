@@ -47,6 +47,8 @@
     <Compile Include="promises\DocumentReady.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="promises\fs\ReadFile.js" />
+    <Compile Include="promises\fs\WriteFile.js" />
     <Compile Include="promises\Timeout.js">
       <SubType>Code</SubType>
     </Compile>
