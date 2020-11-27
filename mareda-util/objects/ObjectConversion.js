@@ -21,7 +21,7 @@ function toHash(object) {
 
         // hash value
         if (typeof v == "string") {
-            hash += StringConversion.toHash(k);
+            hash += StringConversion.toHash(v);
             hash *= 13;
             hash |= 0;
         }
