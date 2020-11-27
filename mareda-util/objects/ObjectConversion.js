@@ -1,4 +1,4 @@
-﻿import * as StringConversion from "../strings/StringConversion.h";
+﻿import StringConversion from "../strings/StringConversion.h";
 
 // Helper for parsing numbers as raw bytes
 const HASH_HELPER_BUFFER = new ArrayBuffer(8);
@@ -7,6 +7,10 @@ const HASH_HELPER_DOUBLE = new Float64Array(HASH_HELPER_BUFFER);
 // Read shorts
 const HASH_HELPER_SHORT = new Uint16Array(HASH_HELPER_BUFFER);
 
+/**
+ * Hashes an object
+ * @param {any} object
+ */
 function toHash(object) {
     const queue = [object];
     // six bytes is the max that will not alter the exponent and create imprecision
