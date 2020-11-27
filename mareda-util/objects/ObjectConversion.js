@@ -17,7 +17,7 @@ function toHash(object) {
     let hash = 0x12DCBA;
 
     while (queue.length > 0) {
-        const v = queue.unshift();
+        const v = queue.shift();
 
         // hash value
         if (typeof v == "string") {
