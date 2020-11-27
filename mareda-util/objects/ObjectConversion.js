@@ -1,4 +1,4 @@
-﻿import StringConversion from "../strings/StringConversion.h";
+﻿import StringConversion from "../strings/StringConversion.js";
 
 // Helper for parsing numbers as raw bytes
 const HASH_HELPER_BUFFER = new ArrayBuffer(8);
