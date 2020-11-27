@@ -49,3 +49,6 @@ function toHash(object) {
     }
     return hash;
 }
+
+
+export default { toHash };
