@@ -1,9 +1,11 @@
 ﻿/**
- * 
+ * Edited from https://stackoverflow.com/a/7616484/607407
+ * One change is that empty string does no longer return zero hash, in compound hashes this would 
+ * remove distinction between no entry and empty string
  * @param {string} str
  */
 function toHash(str) {
-    var hash = 0, i, chr;
+    var hash = 0b100101, i, chr;
     for (i = 0; i < str.length; i++) {
         chr = str.charCodeAt(i);
         hash = ((hash << 5) - hash) + chr;

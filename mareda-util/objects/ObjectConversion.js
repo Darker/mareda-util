@@ -8,7 +8,7 @@ const HASH_HELPER_DOUBLE = new Float64Array(HASH_HELPER_BUFFER);
 const HASH_HELPER_SHORT = new Uint16Array(HASH_HELPER_BUFFER);
 
 /**
- * Hashes an object
+ * Hashes any javascript value recursively. Intended for JSON-like data
  * @param {any} object
  */
 function toHash(object) {
@@ -39,6 +39,10 @@ function toHash(object) {
                     queue.push(val);
                 }
             }
+            else if (v == null) {
+                hash *= 7;
+                hash |= 0;
+            }
             // just a normal object
             else {
                 const pairs = Object.entries(v);
@@ -49,7 +53,9 @@ function toHash(object) {
                 }
             }
         }
-        
+        else if (typeof v == "undefined") {
+            hash ^= 0b10101010101;
+        }
     }
     return hash;
 }

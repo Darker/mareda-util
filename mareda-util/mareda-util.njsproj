@@ -44,12 +44,21 @@
     <Compile Include="iterators\SmartIterable.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="objects\ObjectConversion.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="objects\ObjectsProperties.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="promises\DocumentReady.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="promises\fs\ReadFile.js" />
     <Compile Include="promises\fs\WriteFile.js" />
     <Compile Include="promises\Timeout.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="strings\StringConversion.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UI\Konami.js">
@@ -63,6 +72,8 @@
     <Folder Include="NewFolder1\" />
     <Folder Include="DOM\" />
     <Folder Include="events\" />
+    <Folder Include="strings\" />
+    <Folder Include="objects\" />
     <Folder Include="UI\" />
     <Folder Include="promises\" />
     <Folder Include="promises\fs\" />
