@@ -4,12 +4,13 @@
  * */
 class ResolvablePromise {
     constructor() {
-        this.promise = new Promise((resolve, reject)) {
+        this.promise = new Promise((resolve, reject) => {
             this._resolve = resolve;
             this._reject = reject;
         });
     }
     resolve(result) {
+        console.log("Resolving", result);
         this._resolve(result);
     }
     reject(error) {
