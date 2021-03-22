@@ -10,7 +10,6 @@ class ResolvablePromise {
         });
     }
     resolve(result) {
-        console.log("Resolving", result);
         this._resolve(result);
     }
     reject(error) {

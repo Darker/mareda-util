@@ -19,7 +19,6 @@ class AsyncQueue {
         if (this.closed) {
             throw new Error("Queue is closed, more items cannot be added.");
         }
-        console.log("Added item", item);
         this.queue.push(item);
         this.notifyItem();
     }

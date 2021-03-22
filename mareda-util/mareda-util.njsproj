@@ -55,10 +55,19 @@
     </Compile>
     <Compile Include="promises\fs\ReadFile.js" />
     <Compile Include="promises\fs\WriteFile.js" />
+    <Compile Include="promises\ResolvablePromise.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="promises\tasks\AsyncQueue.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="promises\Timeout.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="strings\StringConversion.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="test\TestAsyncQueue.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UI\Konami.js">
@@ -72,6 +81,8 @@
     <Folder Include="NewFolder1\" />
     <Folder Include="DOM\" />
     <Folder Include="events\" />
+    <Folder Include="test\" />
+    <Folder Include="promises\tasks\" />
     <Folder Include="strings\" />
     <Folder Include="objects\" />
     <Folder Include="UI\" />
