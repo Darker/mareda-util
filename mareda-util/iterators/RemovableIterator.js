@@ -8,10 +8,11 @@ class RemovableEntry {
      * @param {number} index
      */
     constructor(array, index) {
-        this.entry = array[index];
-        this.array = array;
-        this.index = index;
+        this.entry = null;
+        this.array = null;
+        this.index = -1;
         this.removed = false;
+        this.reset(array, index);
     }
     remove() {
         if (!this.removed) {
@@ -20,7 +21,7 @@ class RemovableEntry {
         }
     }
     get value() {
-        return this.array[this.index];
+        return this.entry;
     }
     set value(value) {
         this.replace(value);
@@ -36,6 +37,18 @@ class RemovableEntry {
         this.entry = newItem;
         this.array[this.index] = newItem;
     }
+    /**
+     * 
+     * @param {T[]} array
+     * @param {number} index
+     */
+    reset(array, index) {
+        if(array)
+            this.entry = array[index];
+        this.array = array;
+        this.index = index;
+        this.removed = false;
+    }
 }
 
 /**
@@ -44,11 +57,18 @@ class RemovableEntry {
  * @returns {IterableIterator<RemovableEntry<T>>}
  */
 function* RemovableIterator(array) {
+    let entry = null;
     for (let i = 0, l = array.length; i < l; ++i) {
         const item = array[i];
-        const riter = new RemovableEntry(array, i);
-        yield riter;
-        if (riter.removed) {
+        if (!entry) {
+            entry = new RemovableEntry(array, i);
+        }
+        else {
+            entry.reset(array, i);
+        }
+
+        yield entry;
+        if (entry.removed) {
             --i;
             --l;
         }

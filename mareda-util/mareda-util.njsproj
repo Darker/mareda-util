@@ -11,7 +11,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>1aa07ea0-6ff8-415c-83c3-c2294c50b5b9</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>app.js</StartupFile>
+    <StartupFile>tools\ExtractSVGLayers.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -53,6 +53,12 @@
     <Compile Include="promises\DocumentReady.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="promises\fs\FileAccess.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="promises\fs\MakeDirectory.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="promises\fs\ReadFile.js" />
     <Compile Include="promises\fs\WriteFile.js" />
     <Compile Include="promises\ResolvablePromise.js">
@@ -70,21 +76,27 @@
     <Compile Include="test\TestAsyncQueue.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="tools\ExtractSVGLayers.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tools\html-util\JSDOC-typedef-generator.js" />
     <Compile Include="UI\Konami.js">
       <SubType>Code</SubType>
     </Compile>
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="tools\html-util\JSDOC-typedef-generator.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="iterators\" />
-    <Folder Include="NewFolder1\" />
     <Folder Include="DOM\" />
     <Folder Include="events\" />
     <Folder Include="test\" />
     <Folder Include="promises\tasks\" />
     <Folder Include="strings\" />
     <Folder Include="objects\" />
+    <Folder Include="tools\" />
+    <Folder Include="tools\html-util\" />
     <Folder Include="UI\" />
     <Folder Include="promises\" />
     <Folder Include="promises\fs\" />

@@ -8,8 +8,10 @@
     "name": ""
   },
   "devDependencies": {
-    "jasmine": "^3.7.0"
+    "jasmine": "^3.7.0",
+    "jsdom": "^16.5.3"
   },
-  "scripts": { "test": "jasmine" }
-
+  "scripts": {
+    "test": "jasmine"
+  }
 }
