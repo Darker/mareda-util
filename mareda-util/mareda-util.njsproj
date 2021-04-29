@@ -59,6 +59,9 @@
     <Compile Include="promises\fs\MakeDirectory.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="promises\fs\ReadDirectory.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="promises\fs\ReadFile.js" />
     <Compile Include="promises\fs\WriteFile.js" />
     <Compile Include="promises\ResolvablePromise.js">
