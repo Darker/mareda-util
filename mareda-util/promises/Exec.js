@@ -1,6 +1,6 @@
 ﻿import * as child_process from "child_process";
 
-function ExecPromise(path, args, options) {
+function Exec(path, args, options) {
     return new Promise(function (resolve, reject) {
         //console.log("EXEC: ", path, args, options);
         const chprocess = child_process.execFile(path, args, options, (err) => { if (err) reject(err); else resolve(); });
@@ -12,4 +12,4 @@ function ExecPromise(path, args, options) {
     });
 }
 
-export default ExecPromise;
+export default Exec;
