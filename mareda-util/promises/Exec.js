@@ -1,15 +1,28 @@
 ﻿import * as child_process from "child_process";
 
-function Exec(path, args, options) {
+/**
+ *
+ * @param {string} command
+ * @param {string[]} commandArguments
+ * @param {import('child_process').ExecFileOptionsWithBufferEncoding} options
+ * @returns {Promise<{stdout:string,stderr:string}>}
+ */
+function Exec(command, commandArguments = [], options = {}) {
     return new Promise(function (resolve, reject) {
-        //console.log("EXEC: ", path, args, options);
-        const chprocess = child_process.execFile(path, args, options, (err) => { if (err) reject(err); else resolve(); });
+        const child = child_process.execFile(command, commandArguments, options, (error, stdout, stderr) => {
+            if (error) {
+                reject(error);
+            }
+            else {
+                resolve({ stdout, stderr });
+            }
+        });
         if (options.stdoutTarget) {
-            //options.stdoutTarget.pipe(process.stdout
-            //console.log(options.stdoutTarget, options.stdoutTarget == process.stdout);
-            chprocess.stdout.pipe(options.stdoutTarget, { end: false });
+            child.stdout.pipe(options.stdoutTarget, { end: false });
+        }
+        if (options.stderrTarget) {
+            child.stderr.pipe(options.stderrTarget, { end: false });
         }
     });
 }
-
 export default Exec;
