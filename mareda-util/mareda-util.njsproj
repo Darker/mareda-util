@@ -53,6 +53,9 @@
     <Compile Include="promises\DocumentReady.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="promises\Exec.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="promises\fs\FileAccess.js">
       <SubType>Code</SubType>
     </Compile>
