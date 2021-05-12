@@ -29,7 +29,7 @@ function ReadDirectoryPromise(directoryPath) {
  * @param {ReadDirectoryOptions} options
  * @returns {Promise<string[]>}
  */
-export default async function ReadDirectory(directoryPath, options = { files: true, directories:false, recursive: false }) {
+export default async function ReadDirectory(directoryPath, options = { files: true, directories: false, recursive: false }) {
     const files = (await ReadDirectoryPromise(directoryPath)).map((filename) => path.resolve(directoryPath, filename));
 
 
