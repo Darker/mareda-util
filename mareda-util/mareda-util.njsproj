@@ -56,6 +56,9 @@
     <Compile Include="promises\Exec.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="promises\ExecCp.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="promises\fs\FileAccess.js">
       <SubType>Code</SubType>
     </Compile>
