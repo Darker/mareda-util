@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "jasmine": "^3.7.0",
-    "jsdom": "^16.5.3"
+    "jsdom": "^16.7.0"
   },
   "scripts": {
     "test": "jasmine"
