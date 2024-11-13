@@ -5,13 +5,16 @@
   "main": "app.js",
   "type": "module",
   "author": {
-    "name": ""
+    "name": "Jakub Mareda"
   },
   "devDependencies": {
-    "jasmine": "^3.7.0",
+    "@types/express": "^4.17.13",
+    "@types/jasmine": "^5.1.4",
+    "jasmine": "^5.1.0",
     "jsdom": "^16.5.3"
   },
   "scripts": {
-    "test": "jasmine"
+    "test": "jasmine --config=test/jasmine_all_tests.json --parallel=14",
+    "unittest": "jasmine --config=test/jasmine_unit.json --parallel=14"
   }
 }

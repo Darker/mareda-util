@@ -8,7 +8,7 @@ import WriteFile from "../promises/fs/WriteFile.js";
 import MakeDirectory from "../promises/fs/MakeDirectory.js";
 
 /**
- * @typedef {import("JSDOM")} JSDOM_t
+ * @typedef {import("jsdom")} JSDOM_t
  * */
 /** @type {JSDOM_t} **/
 const JSDOM = JSDOM_m;

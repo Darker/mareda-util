@@ -4,7 +4,7 @@
  * remove distinction between no entry and empty string
  * @param {string} str
  */
-function toHash(str) {
+export default function hashString(str) {
     var hash = 0b100101, i, chr;
     for (i = 0; i < str.length; i++) {
         chr = str.charCodeAt(i);
@@ -13,6 +13,3 @@ function toHash(str) {
     }
     return hash;
 }
-
-
-export default { toHash };

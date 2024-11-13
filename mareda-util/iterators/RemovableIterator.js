@@ -56,7 +56,7 @@ class RemovableEntry {
  * @param {T[]} array
  * @returns {IterableIterator<RemovableEntry<T>>}
  */
-function* RemovableIterator(array) {
+function* removableIterator(array) {
     let entry = null;
     for (let i = 0, l = array.length; i < l; ++i) {
         const item = array[i];
@@ -86,4 +86,4 @@ function* RemovableIterator(array) {
 //    }
 //}
 //console.log(items);
-module.exports = RemovableIterator;
+

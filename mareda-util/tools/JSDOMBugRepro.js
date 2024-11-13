@@ -1,6 +1,6 @@
 ﻿import JSDOM_m from "jsdom";
 /**
- * @typedef {import("JSDOM")} JSDOM_t
+ * @typedef {import("jsdom")} JSDOM_t
  * */
 /** @type {JSDOM_t} **/
 const JSDOM = JSDOM_m;
