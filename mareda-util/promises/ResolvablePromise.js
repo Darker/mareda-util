@@ -1,19 +1,100 @@
 ﻿/**
  * Simple promise wrapper that allows you to resolve or reject a promise later.
  * 
- * */
+ * @template TResult
+ */
 class ResolvablePromise {
-    constructor() {
-        this.promise = new Promise((resolve, reject) => {
+    /**
+     * 
+     * @param {AbortSignal} [abortSignal]
+     */
+    constructor(abortSignal) {
+        /** @type {Promise<TResult>} **/
+        this.inner = new Promise((resolve, reject)=>{
             this._resolve = resolve;
             this._reject = reject;
         });
+        this.resolved = false;
+        this.rejected = false;
+        this.aborted = false;
+        /** @type {TResult|Error} **/
+        this.value = null;
+
+        if(abortSignal) {
+            this.abortSignal = abortSignal;
+            this._abortListener = ()=>{
+                this.aborted = true;
+                this.reject(this.abortSignal.reason);
+            };
+            abortSignal.addEventListener("abort", this._abortListener);
+        }
     }
-    resolve(result) {
-        this._resolve(result);
+    get fulfilled() {
+        return this.resolved || this.rejected;
     }
-    reject(error) {
-        this._reject(error);
+    removeAbort() {
+        if(this.abortSignal) {
+            this.abortSignal.removeEventListener("abort", this._abortListener);
+            delete this.abortSignal;
+            delete this._abortListener;
+        }
+    }
+    /**
+     * Resolve this promise with given value
+     * @param {TResult} value 
+     */
+    resolve(value, override = false) {
+        this.removeAbort();
+
+        if(this.fulfilled) {
+            if(override) {
+                this.value = value;
+                this.resolved = true;
+                this.rejected = false;
+            }
+            else {
+                throw new Error("Promise already fulfilled, cannot resolve");
+            }
+        }
+        else {
+            this._resolve(value);
+            this.value = value;
+            this.resolved = true;
+        }
+    }
+    /**
+     * 
+     * @param {Error} exception 
+     * @param {boolean} override 
+     */
+    reject(exception, override = false) {
+        this.removeAbort();
+
+        if(this.fulfilled) {
+            if(override) {
+                this.value = exception;
+                this.resolved = false;
+                this.rejected = true;
+            }
+            else {
+                throw new Error("Promise already fulfilled, cannot reject");
+            }
+        }
+        else {
+            this._reject(exception);
+            this.value = exception;
+            this.rejected = true;
+        }
+    }
+    async get() {
+        if(this.resolved) {
+            return this.value;
+        }
+        else if (this.rejected) {
+            throw this.value;
+        }
+        else
+            return await this.inner;
     }
 }
 
