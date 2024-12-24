@@ -45,7 +45,7 @@ class AsyncQueue {
             if (this.closed) {
                 throw new Error("No more items, queue is closed.");
             }
-            await this.itemPromise.promise;
+            await this.itemPromise.get();
         }
         return this.queue.shift();
     }

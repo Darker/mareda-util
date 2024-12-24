@@ -6,7 +6,8 @@ class PlannedEmit {
      * @param {EventThrottler} parent
      */
     constructor(name, parent) {
-        this.timeout = -1;
+        /** @type {ReturnType<setTimeout>} */
+        this.timeout = null;
         this.started = new Date().getTime();
         this.lastReset = -1;
         /** @type {EventThrottler} **/
@@ -99,14 +100,11 @@ class EventThrottler {
         let settings = this.getTimeoutSettings(name, true);
 
         if (!settings) {
-            settings = this.delayConfigs[name] = {};
-            for (const [key, value] of Object.entries(this.delayDefaults)) {
-                settings[key] = value;
-            }
+            settings = this.delayConfigs[name] = {...this.delayDefaults};
         }
 
-        for (const [key, value] of Object.entries(value)) {
-            settings[key] = value;
+        for (const [key, timeoutVal] of Object.entries(value)) {
+            settings[key] = timeoutVal;
         }
     }
     /**

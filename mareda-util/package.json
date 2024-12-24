@@ -15,6 +15,7 @@
   },
   "scripts": {
     "test": "jasmine --config=test/jasmine_all_tests.json --parallel=14",
-    "unittest": "jasmine --config=test/jasmine_unit.json --parallel=14"
+    "unittest": "jasmine --config=test/jasmine_unit.json --parallel=14",
+    "fittest": "jasmine --config=test/jasmine_all_tests.json"
   }
 }
