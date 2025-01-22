@@ -23,13 +23,13 @@ class ExecMonitor {
         }
         finally {
             --this.parallelCalls;
-            console.log("Parallel = ", this.parallelCalls);
+            //console.log("Parallel = ", this.parallelCalls);
         }
     }
 }
 
 describe("SimpleMutex test", ()=>{
-    fit("prevents parallel calls", async ()=>{
+    it("prevents parallel calls", async ()=>{
         const mon = new ExecMonitor();
         const lock = new SimpleMutex();
         async function callMon() {
@@ -38,11 +38,11 @@ describe("SimpleMutex test", ()=>{
             });
         }
         await Promise.all([callMon(), callMon(), callMon(), callMon()]);
-        expect(mon.totalCalls).toBe(3);
+        expect(mon.totalCalls).toBe(4);
         expect(mon.maxParallelCalls).toBe(1);
         expect(mon.parallelCalls).toBe(0);
     });
-    fit("order is respected", async ()=>{
+    it("order is respected", async ()=>{
         const vals = [];
         const lock = new SimpleMutex();
         /**
