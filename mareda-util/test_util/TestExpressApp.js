@@ -10,9 +10,8 @@ import http from "http";
  */
 function expressListen(app, port, ip) {
     return new Promise((resolve, reject)=>{
-        const server = http.createServer(app);
-        server.listen(port, ip, )
-        app.listen(port, ip, (e)=>{
+        let server = null;
+        server = app.listen(port, ip, (e)=>{
             if(e) {
                 reject(e);
             }
@@ -48,13 +47,22 @@ class TestExpressApp {
         this.app = expressInst;
         this.port = -1;
         this.server = null;
+        this.destroyed = false;
     }
     async start() {
         let port = 3843;
 
+        if(this.port != -1) {
+            if(this.destroyed) {
+                throw new Error("Server already destroyed!");
+            }
+            return this.port;
+        }
+
         while(port < 4000) {
             try {
                 this.server = await expressListen(this.app, port, "127.0.0.1");
+                break;
             }
             catch(e) {
                 ++port;
@@ -67,7 +75,17 @@ class TestExpressApp {
         return port;
     }
     async cleanup() {
-        await serverClose(this.server);
+        if(this.destroyed) {
+            return;
+        }
+        this.destroyed = true;
+        try {
+            await serverClose(this.server);
+        }
+        catch(e) {
+            this.destroyed = false;
+            throw e;
+        }
     }
 };
 
