@@ -9,7 +9,7 @@ class ResolvablePromise {
      * @param {AbortSignal} [abortSignal]
      */
     constructor(abortSignal) {
-        /** @type {Promise<TResult>} **/
+        /** @type {Promise<TResult>} do not await directly, use get() **/
         this.inner = new Promise((resolve, reject)=>{
             this._resolve = resolve;
             this._reject = reject;
@@ -28,6 +28,11 @@ class ResolvablePromise {
             };
             abortSignal.addEventListener("abort", this._abortListener);
         }
+        
+        // Tracks listeners for the purpose of quiet destruction
+        // if nothing is listening on the promise, reject on the inner is not called
+        // when destroy() occurs
+        this.listenerCount = 0;
     }
     get fulfilled() {
         return this.resolved || this.rejected;
@@ -86,6 +91,24 @@ class ResolvablePromise {
             this.rejected = true;
         }
     }
+    /**
+     * This is similar to reject, however will do nothing if nothing is awaiting the
+     * promise at this moment. This allows cancellation of ResolvablePromise
+     * without encountering unhandled exception error.
+     * @param {Error} destroyError 
+     */
+    destroy(destroyError) {
+        this.removeAbort();
+        if(!this.fulfilled) {
+            this.rejected = true;
+            this.value = destroyError;
+            if(this.listenerCount > 0) {
+                // kick out any listeners with an error
+                this._reject(destroyError);
+            }
+            this.inner = null;
+        }
+    }
     async get() {
         if(this.resolved) {
             return this.value;
@@ -93,8 +116,15 @@ class ResolvablePromise {
         else if (this.rejected) {
             throw this.value;
         }
-        else
-            return await this.inner;
+        else {
+            ++this.listenerCount;
+            try {
+                return await this.inner;
+            }
+            finally {
+                --this.listenerCount;
+            }
+        }
     }
 }
 
