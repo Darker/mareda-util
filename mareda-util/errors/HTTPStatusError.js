@@ -1,10 +1,10 @@
-import isNotEmptyString from "../strings/isNotEmptyString.js";
+import isNonEmptyString from "../strings/isNotEmptyString.js";
 
 function constructErrorMsg(method, url, statusCode) {
     if(typeof method != "string") {
         method = "";
     }
-    return "Failed "+method.toUpperCase()+(isNotEmptyString(url) ? " "+url:"")+" status: "+statusCode;
+    return "Failed "+method.toUpperCase()+(isNonEmptyString(url) ? " "+url:"")+" status: "+statusCode;
 }
 
 class HTTPStatusError extends Error {
@@ -19,7 +19,7 @@ class HTTPStatusError extends Error {
      */
     constructor(statusCode, {url=null, options=null, method="get", message= ""}={}) {
         super(
-            isNotEmptyString(message) ? message : constructErrorMsg(method, url, statusCode),
+            isNonEmptyString(message) ? message : constructErrorMsg(method, url, statusCode),
             options
         );
         this.code = statusCode;
