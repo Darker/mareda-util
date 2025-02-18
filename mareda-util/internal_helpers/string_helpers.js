@@ -8,7 +8,7 @@ export function padNum(number, digits, {noexcept = false, padding = "0", ifInval
     const isBigint =  typeof number == "bigint";
     function nothing() {
         if(noexcept) {
-            return ifInvalid.padStart(digits);
+            return ifInvalid.padStart(digits, padding);
         }
         else {
             throw new TypeError("Not a number: "+number);

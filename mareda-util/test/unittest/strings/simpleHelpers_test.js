@@ -1,4 +1,4 @@
-import isNonEmptyString from "../../../strings/isNotEmptyString.js";
+import isNonEmptyString from "../../../strings/isNonEmptyString.js";
 import removeAccents from "../../../strings/removeAccents.js";
 
 describe("simpleHelpers test", ()=>{

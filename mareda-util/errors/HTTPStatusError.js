@@ -1,4 +1,4 @@
-import isNonEmptyString from "../strings/isNotEmptyString.js";
+import isNonEmptyString from "../strings/isNonEmptyString.js";
 
 function constructErrorMsg(method, url, statusCode) {
     if(typeof method != "string") {
