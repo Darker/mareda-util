@@ -37,19 +37,6 @@ function distance2D(ax, ay, bx, by) {
 }
 
 /**
- * Smallest angular distance between two angles (in radians).
- * Result is in [0, π].
- * @param {number} theta1
- * @param {number} theta2
- * @returns {number}
- */
-function angularDistance(theta1, theta2) {
-  let diff = Math.abs(theta1 - theta2) % (2 * Math.PI);
-  if (diff > Math.PI) diff = 2 * Math.PI - diff;
-  return diff;
-}
-
-/**
  * Dot product of two vectors.
  * @param {number} ax
  * @param {number} ay
@@ -94,7 +81,6 @@ export const vectors = {
   toPolar2D,
   fromPolar2D,
   distance2D,
-  angularDistance,
   dot2D,
   normalize2D,
   angleBetween2D,
