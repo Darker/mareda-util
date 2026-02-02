@@ -19,15 +19,27 @@ export const PRIMITIVE_TYPE_HASH_BASES = {
     "bigint": 2843n,
     "date": 2903n,
     "undefined": 48683343337n,
+    "null": 63283531n,
+    "object": 3220901n
 };
 
 const STD_TYPE_HASH_BASES = {
     "Array": 69815771n,
+    "RegExp": 60497n
 };
 // since all stuff here is done in sync, I can reuse a single instance to convert
 // number type, which is float64, to bytes
 const FLOAT_PARSER_ARRAY = new Float64Array(1);
 const FLOAT_PARSER_BYTES = new Uint32Array(FLOAT_PARSER_ARRAY.buffer);
+
+/**
+ * Abuses typed array to convert 4 byte float to 2 32bit ints
+ * @param {number} num 
+ */
+function noCryptoNumberHash(num) {
+    FLOAT_PARSER_ARRAY[0] = num;
+    return (BigInt(FLOAT_PARSER_BYTES[0]) ^ BigInt(FLOAT_PARSER_BYTES[1]))
+}
 
 /**
  * 
@@ -73,7 +85,7 @@ export default function noCryptoObjectHash(obj, {maxIterations = 500000, classHa
         let isArray = false;
 
         if(value === null) {
-            valueHash = 63283531n;
+            valueHash = PRIMITIVE_TYPE_HASH_BASES.null;
         }
         else if(typeof value === "undefined") {
             valueHash = PRIMITIVE_TYPE_HASH_BASES.undefined;
@@ -87,8 +99,7 @@ export default function noCryptoObjectHash(obj, {maxIterations = 500000, classHa
             valueHash = noCryptoStringHash(value);
         }
         else if(typeof value === "number") {
-            FLOAT_PARSER_ARRAY[0] = value;
-            valueHash = (BigInt(FLOAT_PARSER_BYTES[0]) ^ BigInt(FLOAT_PARSER_BYTES[1])) ^ PRIMITIVE_TYPE_HASH_BASES.number;
+            valueHash = noCryptoNumberHash(value) ^ PRIMITIVE_TYPE_HASH_BASES.number;
         }
         else if(typeof value === "bigint") {
             valueHash = value ^ PRIMITIVE_TYPE_HASH_BASES.bigint;
@@ -96,13 +107,22 @@ export default function noCryptoObjectHash(obj, {maxIterations = 500000, classHa
         else if(typeof value === "boolean") {
             valueHash = value ? 977n : 443n;
         }
+        else if(typeof value === "function") {
+            throw new TypeError("Functions cannot be hashed!");
+        }
         else if(typeof value === "object") {
             if(value instanceof Date) {
                 valueHash = BigInt(value.getTime()) ^ PRIMITIVE_TYPE_HASH_BASES.date;
             }
-            else {
+            else if(value instanceof RegExp) {
+                valueHash = valueHash ^ noCryptoStringHash(value.source);
+                valueHash = valueHash ^ STD_TYPE_HASH_BASES.RegExp;
+                valueHash = valueHash ^ noCryptoStringHash(value.flags);
+                valueHash = valueHash ^ BigInt(value.lastIndex);
+            }
+            else if(value?.constructor == Object) {
                 hasNested = true;
-                valueHash = 3220901n;
+                valueHash = PRIMITIVE_TYPE_HASH_BASES.object;
             }
         }
 
