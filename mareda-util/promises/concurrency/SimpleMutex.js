@@ -6,6 +6,16 @@ class SimpleMutex {
         this.id = 0;
     }
 
+    get isLocked() {
+        return this.queue.length > 0;
+    }
+
+    async waitUnlocked() {
+        while(this.isLocked) {
+            await this.queue[this.queue.length - 1];
+        }
+    }
+
     /**
      * @template TRet
      * @param {()=>Promise<TRet>} callback 
