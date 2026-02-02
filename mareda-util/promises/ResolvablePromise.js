@@ -17,8 +17,11 @@ class ResolvablePromise {
         this.resolved = false;
         this.rejected = false;
         this.aborted = false;
-        /** @type {TResult|Error} **/
+        /** @type {TResult} **/
         this.value = null;
+
+        /** @type {Error} **/
+        this.error = null;
 
         if(abortSignal) {
             this.abortSignal = abortSignal;
@@ -77,7 +80,7 @@ class ResolvablePromise {
 
         if(this.fulfilled) {
             if(override) {
-                this.value = exception;
+                this.error = exception;
                 this.resolved = false;
                 this.rejected = true;
             }
@@ -87,7 +90,7 @@ class ResolvablePromise {
         }
         else {
             this._reject(exception);
-            this.value = exception;
+            this.error = exception;
             this.rejected = true;
         }
     }
@@ -101,7 +104,7 @@ class ResolvablePromise {
         this.removeAbort();
         if(!this.fulfilled) {
             this.rejected = true;
-            this.value = destroyError;
+            this.error = destroyError;
             if(this.listenerCount > 0) {
                 // kick out any listeners with an error
                 this._reject(destroyError);
@@ -109,6 +112,7 @@ class ResolvablePromise {
             this.inner = null;
         }
     }
+
     async get() {
         if(this.resolved) {
             return this.value;
