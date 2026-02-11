@@ -1,4 +1,5 @@
 
+import getFieldInherited from "../typing/getFieldInherited.js";
 import PendingRPC from "./PendingRPC.js";
 
 /**
@@ -21,6 +22,55 @@ class RPCNode {
         /** @type {Map<number, PendingRPC>} **/
         this.pendingGenerators = new Map();
         this.outgoingId = 0;
+    }
+
+    // used to attach hidden field with client instance
+    static SYM_CLIENT_INST = Symbol("RPCNode");
+
+    /**
+     * @template {abstract new (...args: any) => any} TClassType
+     * @param {TClassType} serverClass 
+     * @param {RPCTransport} transport
+     */
+    async createRemote(serverClass, transport) {
+        /** @type {rpc.RPCClassClient<typeof serverClass>} **/
+        // @ts-ignore
+        const clientApi = {};
+        
+        /** @type {{[name:string]:rpc.DescriptorField}} **/
+        // @ts-ignore
+        const descriptor = serverClass.RPC_DESCRIPTOR;
+
+        const clientHandler = new RPCNode(transport);
+
+        // @ts-ignore
+        clientApi[RPCNode.SYM_CLIENT_INST] = clientHandler;
+        
+        for(const [method, description] of Object.entries(descriptor)) {
+            const originalMethod = getFieldInherited(serverClass, method);
+            if(typeof originalMethod != "function") {
+                throw new Error("Cannot set "+method+" to api, it is not a function!");
+            }
+
+            if(description.type == "async_generator") {
+                // @ts-ignore
+                clientApi[method] = async () => { throw new Error("Generators not implemented yet"); }; 
+            }
+            else if(description.type == "generator") {
+                // @ts-ignore
+                clientApi[method] = async () => { throw new Error("Generators not implemented yet"); }; 
+            }
+            else if(description.type  == "promise" || description.type == "sync") {
+                // @ts-ignore
+                clientApi[method] = 
+                            async (/** @type {any[]} */ ...args) => {
+                                return await clientHandler.executeRPC(method, args);
+                            };  
+                
+            }
+        }
+
+        return {clientApi, clientHandler};
     }
 
 
