@@ -2,6 +2,7 @@ import ResolvablePromise from "../ResolvablePromise.js";
 
 class SimpleMutex {
     constructor() {
+        /** @type {ResolvablePromise[]} **/
         this.queue = [];
         this.id = 0;
     }
@@ -12,7 +13,9 @@ class SimpleMutex {
 
     async waitUnlocked() {
         while(this.isLocked) {
-            await this.queue[this.queue.length - 1];
+            const curLastPromise = this.queue[this.queue.length - 1];
+            //console.log("Waiting for unlock queue.length = "+this.queue.length + " fulfilled = "+curLastPromise.fulfilled);
+            await curLastPromise.get();
         }
     }
 
@@ -24,6 +27,7 @@ class SimpleMutex {
         const myTurn = new ResolvablePromise();
         
         this.queue.push(myTurn);
+        //console.log("Added to queue: ", this.queue.length)
         if(this.queue.length > 1) {
             const prev = this.queue[this.queue.length-2];
             await prev.get();
