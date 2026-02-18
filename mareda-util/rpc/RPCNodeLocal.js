@@ -67,7 +67,8 @@ class RPCClient extends RPCNode {
             }
         }
         catch(e) {
-
+            // @ts-ignore
+            this.resolveReceivedError(pending.responseId, msgId, e);
         }
     }
 
@@ -89,6 +90,25 @@ class RPCClient extends RPCNode {
     }
 
     /**
+     * @param {number} id
+     * @param {number} replyTo
+     * @param {Error} data
+     */
+    resolveReceivedError(id, replyTo, data) {
+        /** @type {rpc.MessageResponseErr} **/
+        const responseMsg = {
+            id: id,
+            responseTo: replyTo,
+            type: "response_error",
+            error: data.message,
+            stack: data.stack.split(/\r?\n/),
+            errorProps: {}
+        };
+
+        this.sendPayload(responseMsg);
+    }
+
+    /**
      * @param {number} msgId
      * @param {string} methodName
      * @param {any[]} args
@@ -104,7 +124,7 @@ class RPCClient extends RPCNode {
                 errorProps: null
             });
         }
-
+        // console.log("Executing local call: ", msgId, methodName, args);
         this.localCallWrapper(msgId, methodName, args);
     }
 };

@@ -24,14 +24,4 @@ class PendingRPC {
     }
 };
 
-/** @type {rpc.AsyncMethods<PendingRPC>} **/
-const test = null;
-const funcr = test.waitGenerator;
-const notf = test.resolutionPromise;
-const a = {a: 1};
-const b = {b: 1};
-
-/** @type {rpc.Merge<typeof a, typeof b>} **/
-const c = null;
-
 export default PendingRPC;

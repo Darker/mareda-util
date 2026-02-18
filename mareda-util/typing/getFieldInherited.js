@@ -19,7 +19,7 @@ export default function getFieldInherited(classType, name, requiredType = "any")
     while(currentPrototype && !Object.hasOwn(currentPrototype, name)) {
         currentPrototype = Object.getPrototypeOf(currentPrototype);
     }
-    if(typeof currentPrototype != "object" || typeof currentPrototype[name] == "undefined") {
+    if(typeof currentPrototype != "object" || currentPrototype == null || typeof currentPrototype[name] == "undefined") {
         return undefined;
     }
     if(requiredType != 'any') {

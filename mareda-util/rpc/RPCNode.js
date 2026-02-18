@@ -12,10 +12,7 @@ class RPCNode {
      */
     constructor(transport) {
         this.transport = transport;
-        this.transport.addReceiveListener(
-            // @ts-ignore
-            (data)=>this.handleReceived(data)
-        );
+        this.transport.addReceiveListener(this);
 
         /** @type {Map<number, PendingRPC>} **/
         this.pendingSent = new Map();
@@ -32,7 +29,7 @@ class RPCNode {
      * @param {TClassType} serverClass 
      * @param {RPCTransport} transport
      */
-    async createRemote(serverClass, transport) {
+    static createRemote(serverClass, transport) {
         /** @type {rpc.RPCClassClient<typeof serverClass>} **/
         // @ts-ignore
         const clientApi = {};
@@ -64,6 +61,7 @@ class RPCNode {
                 // @ts-ignore
                 clientApi[method] = 
                             async (/** @type {any[]} */ ...args) => {
+                                // console.log("Promise handler called on ", method);
                                 return await clientHandler.executeRPC(method, args);
                             };  
                 
@@ -93,10 +91,15 @@ class RPCNode {
             sent.resolutionPromise.reject(err);
         }
         else if(message.type == "request") {
+            // console.log("Executing local call: ", message);
             this.executeLocalCall(message.id, message.methodName, message.args);
+        }
+        else {
+            console.error("Invalid message: ", message);
         }
     }
 
+    // @ts-ignore
     executeLocalCall(msgId, methodName, args) {
         throw new Error("Not implemented in abstract RPCNode!");
     }
@@ -115,7 +118,7 @@ class RPCNode {
         };
         const pending = new PendingRPC();
         this.pendingSent.set(msg.id, pending);
-
+        console.log("Sent RPC: ", msg);
         this.sendPayload(msg);
 
         return await pending.waitPromise();

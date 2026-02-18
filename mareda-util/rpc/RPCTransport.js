@@ -44,6 +44,7 @@ class RPCTransportWebWorker extends RPCTransport {
         super();
         this.port = workerPort;
         this.port.addEventListener("message", (e)=>{this.receive(e.data)});
+        this.port.start();
 
     }
 
@@ -51,6 +52,7 @@ class RPCTransportWebWorker extends RPCTransport {
      * @param {any} data
      */
     receive(data) {
+        console.log("RPCTransportWebWorker received ", data, " informing", this.receiveListeners.length, "listeners");
         for(const rec of this.receiveListeners) {
             this.informListener(rec, data);
         }
@@ -60,6 +62,7 @@ class RPCTransportWebWorker extends RPCTransport {
      * @param {any} data
      */
     async send(data) {
+        console.log("RPCTransportWebWorker sent ", data);
         this.port.postMessage(data);
     }
 
@@ -72,11 +75,13 @@ class RPCTransportWebWorker extends RPCTransport {
             listener.handleReceived(data);
         }
         catch(e) {
+            console.error("RPCTransportWebWorker listener error: ", e);
             return e;
         }
         return null;
     }
 }
 
+RPCTransport.WebWorker = RPCTransportWebWorker;
 
 export default RPCTransport;
