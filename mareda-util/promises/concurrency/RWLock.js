@@ -7,7 +7,7 @@ class RWLock {
         this.writeMutex = new SimpleMutex();
 
         this.reads = 0;
-        /** @type {ResolvablePromise | null} **/
+        /** @type {ResolvablePromise<any> | null} **/
         this.noReadsPromise = null;
     }
 
@@ -16,12 +16,14 @@ class RWLock {
      * @param {()=>Promise<T>} callback 
      */
     async read(callback) {
-        await this.writeMutex.waitUnlocked();
+        // ensures this is all set when there are no active writers
+        await this.writeMutex.onUnlocked(()=>{
+            ++this.reads;
 
-        ++this.reads;
-        if(this.noReadsPromise == null || this.noReadsPromise.fulfilled) {
-            this.noReadsPromise = new ResolvablePromise();
-        }
+            if(this.noReadsPromise == null || this.noReadsPromise.fulfilled) {
+                this.noReadsPromise = new ResolvablePromise();
+            }
+        });
 
         try {
             const res = await callback();
@@ -47,6 +49,9 @@ class RWLock {
      */
     async write(callback) {
         return await this.writeMutex.locked(async ()=>{
+            // wait for already active readers to exit
+            // new readers are blocked by onUnlocked since
+            // we are already holding the lock
             await this.waitNoReads();
             try {
                 return await callback();

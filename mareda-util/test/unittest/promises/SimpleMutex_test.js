@@ -43,6 +43,7 @@ describe("SimpleMutex test", ()=>{
         expect(mon.parallelCalls).toBe(0);
     });
     it("order is respected", async ()=>{
+        /** @type {number[]} **/
         const vals = [];
         const lock = new SimpleMutex();
         /**
@@ -65,5 +66,25 @@ describe("SimpleMutex test", ()=>{
         const res = await Promise.all(proms);
         expect(res).toEqual([0,1,2,3,4]);
         expect(vals).toEqual([0,1,2,3,4]);
+    });
+    it("allows reentry", async() => {
+        const lock = new SimpleMutex(true);
+        /**
+         * 
+         * @param {object} reentry 
+         */
+        async function call2(reentry = null) {
+            await lock.locked(async (reentry) => {
+                return "success";
+            }, {reentryHook: reentry});
+        }
+
+        async function call1() {
+            await lock.locked(async (reentry) => {
+                return await call2(reentry);
+            });
+        }
+
+        await call1();
     });
 });

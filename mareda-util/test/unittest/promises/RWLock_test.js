@@ -2,13 +2,15 @@ import RWLock from "../../../promises/concurrency/RWLock.js";
 import timeoutPromise from "../../../promises/timeoutPromise.js";
 
 describe("RWLock test", ()=>{
-    it("description", async ()=>{
+    it("basic test", async ()=>{
         let val = 0;
         const lock = new RWLock();
 
         async function doWrite() {
             const oldVal = val;
+            expect(lock.reads).toBe(0);
             await timeoutPromise(Math.random()*9 + 5);
+            expect(lock.reads).toBe(0);
             expect(oldVal).toEqual(val);
             val = oldVal + 1;
             // console.log(oldVal + " => " + val)
@@ -16,6 +18,7 @@ describe("RWLock test", ()=>{
 
         async function doRead() {
             const oldVal = val;
+            
             await timeoutPromise(Math.random()*8 + 5);
             expect(oldVal).toEqual(val);
             return val;
@@ -37,7 +40,6 @@ describe("RWLock test", ()=>{
                     expect(cur).toBeGreaterThanOrEqual(prev);
                     prev = cur;
                 });
-                
             }
         }
 
