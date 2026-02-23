@@ -39,10 +39,11 @@ function* spliced(data, predicate) {
 /**
  * @description Finds max value that is maximal according to the max calculator given in second argument
  * @template T
+ * @template {true|false} TResultBool
  * @param {Iterable<T>|T[]} iterable collection of items to search in
  * @param {function(T):number} calculator function that translates value to number
- * @param {boolean} returnIndex true if index should be returned instead of entry
- * @returns {T|number} Index of the max item or -1
+ * @param {TResultBool} returnIndex true if index should be returned instead of entry
+ * @returns {TypeChoice<TResultBool, number, T>} Index of the max item or -1
  */
 function findMaxFunction(iterable, calculator, returnIndex = false, reverse = false) {
     if (typeof calculator !== "function") {

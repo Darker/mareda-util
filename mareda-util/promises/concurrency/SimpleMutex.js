@@ -23,6 +23,9 @@ class SimpleMutex {
 
         this.allowReentry = allowReentry;
         this.debugLock = debugLock;
+        /**
+         * @type {string[]}
+         */
         this.stackQueue = [];
     }
 
