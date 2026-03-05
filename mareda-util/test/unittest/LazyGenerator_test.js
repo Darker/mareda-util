@@ -82,4 +82,37 @@ describe("LazyGenerator test", ()=>{
         expect(results).toEqual([1,2,3,4]);
         expect([...gen]).toEqual([1,2,3,4]);
     });
+
+    it("cat preserves order", ()=>{
+        const gen = LazyGenerator.create([1,2]).cat([3]).cat([4]);
+        expect(gen.lastStep.restartable).toBe(true);
+        expect(gen.lastStep.indexable).toBe(true);
+        
+        const results = [...gen];
+        expect(results).toEqual([1,2,3,4]);
+        expect([...gen]).toEqual([1,2,3,4]);
+    });
+
+    it("cat of empty does not add anything", ()=>{
+        const gen = LazyGenerator.create([1,2]).cat([]).cat([3])
+        expect(gen.lastStep.restartable).toBe(true);
+        expect(gen.lastStep.indexable).toBe(true);
+
+        expect(gen.lastStep.getLength()).toBe(3);
+        
+        const results = [...gen];
+        expect(results).toEqual([1,2,3]);
+        expect([...gen]).toEqual([1,2,3]);
+    });
+
+    it("cat can be filtered", ()=>{
+        const gen = LazyGenerator.create([1,2]).cat([3,4]).cat([5]).filter((x)=>x%2==0)
+        expect(gen.lastStep.restartable).toBe(true);
+        expect(gen.lastStep.indexable).toBe(false);
+        
+        const results = [...gen];
+        expect(results).toEqual([2,4]);
+        expect([...gen]).toEqual([2,4]);
+    });
+
 });

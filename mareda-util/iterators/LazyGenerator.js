@@ -1,6 +1,6 @@
-const GENERATOR_END = {};
-const GENERATOR_CONTINUE = {};
-const GENERATOR_NO_ITEM = {};
+const GENERATOR_END = Object.freeze({name: "GENERATOR_END"});
+const GENERATOR_CONTINUE = Object.freeze({name: "GENERATOR_CONTINUE"});
+const GENERATOR_NO_ITEM = Object.freeze({name: "GENERATOR_NO_ITEM"});
 
 /**
  * @template TItem
@@ -77,6 +77,10 @@ class GeneratorStep {
     }
 }
 
+/**
+ * @template {any} TItem
+ * @extends {GeneratorStep<TItem>}
+ */
 class GeneratorEmptyStep extends GeneratorStep {
     constructor() {
         super();
@@ -185,9 +189,21 @@ class GeneratorIterableSource extends GeneratorStep {
             throw new Error("Cannot look up indices in a generator.");
         }
     }
+
+    getLength() {
+        if(this.array) {
+            return this.array.length;
+        }
+        else {
+            throw new Error("Cannot get length of a generator.");
+        }
+    }
 }
 
 /**
+ * This is a helper for any steps that take items from one
+ * source and return values, such as filtering or mapping
+ * 
  * @template TItem
  * @template TResult
  * @extends {GeneratorStep<TResult>}
@@ -214,18 +230,18 @@ class GeneratorNextStep extends GeneratorStep {
     getNext() {
         while(true) {
             const input = this.source.getNext();
-            if(input == GENERATOR_CONTINUE) {
+            if(input === GENERATOR_CONTINUE) {
                 continue;
             }
-            else if(input == GENERATOR_END) {
-                break
+            else if(input === GENERATOR_END) {
+                break;
             }
             else {
                 const processedInput = this.processInput(input);
-                if(processedInput == GENERATOR_CONTINUE) {
+                if(processedInput === GENERATOR_CONTINUE) {
                     continue;
                 }
-                else if(processedInput == GENERATOR_END) {
+                else if(processedInput === GENERATOR_END) {
                     break;
                 }
                 else {
@@ -272,6 +288,7 @@ class GeneratorMapStep extends GeneratorNextStep {
     processInput(input) {
         return this.transform(input);
     }
+
     /**
      * @param {number} index 
      * @returns {TResult}
@@ -331,12 +348,12 @@ class GeneratorFlatStep extends GeneratorStep {
         }
         while(true) {
             const value = this.source.getNext();
-            if(value == GENERATOR_END) {
+            if(value === GENERATOR_END) {
                 
                 // @ts-ignore
                 return GENERATOR_END;
             }
-            if(value == GENERATOR_CONTINUE) {
+            if(value === GENERATOR_CONTINUE) {
                 continue;
             }
             // @ts-ignore
@@ -377,6 +394,89 @@ class GeneratorFilterStep extends GeneratorNextStep {
         }
         else {
             return GENERATOR_CONTINUE;
+        }
+    }
+}
+
+/**
+ * @template TItem
+ * @extends {GeneratorStep<TItem>}
+ */
+class GeneratorCatStep extends GeneratorStep {
+    /**
+     * 
+     * @param {GeneratorStep<TItem>} source1 
+     * @param {GeneratorStep<TItem>} source2
+     */
+    constructor(source1, source2) {
+        super();
+        this.source1 = source1;
+        this.source2 = source2;
+
+        this.assignable = source1.assignable && source2.assignable;
+        this.indexable = source1.indexable && source2.indexable;
+        this.restartable = source1.restartable && source2.restartable;
+        this.mustBeCloned = true;
+
+        this.source1Ended = false;
+        this.source2Ended = false;
+    }
+    // @ts-ignore
+    getRestartedClone() {
+        return new GeneratorCatStep(this.source1.getRestarted(), this.source2.getRestarted());
+    }
+    /**
+     * 
+     * @returns {TItem}
+     */
+    getNext() {
+        if(!this.source1Ended) {
+            const res = this.source1.getNextNonContinuing();
+            if(res !== GENERATOR_END) {
+                return res;
+            }
+            else {
+                this.source1Ended = true;
+            }
+        }
+        if(!this.source2Ended) {
+            const res = this.source2.getNextNonContinuing();
+            if(res !== GENERATOR_END) {
+                return res;
+            }
+            else {
+                this.source2Ended = true;
+            }
+        }
+
+        // @ts-ignore
+        return GENERATOR_END;
+    }
+
+    /**
+     * 
+     * @param {number} index
+     * @returns {TItem}
+     */
+    getIndex(index) {
+        if(!this.indexable) {
+            return super.getIndex(index);
+        }
+        const l1 = this.source1.getLength();
+        if(l1 > index) {
+            return this.source1.getIndex(index);
+        }
+        else {
+            return this.source2.getIndex(index - l1);
+        }
+    }
+
+    getLength() {
+        if(!this.indexable) {
+            return super.getLength();
+        }
+        else {
+            return this.source1.getLength() + this.source2.getLength();
         }
     }
 }
@@ -556,7 +656,7 @@ class LazyGenerator {
 
         if(first) {
             if(sourceData instanceof GeneratorStep) {
-                return cloneStep ? sourceData.getRestarted() : sourceData;
+                return cloneStep ? sourceData.getRestartedClone() : sourceData;
             }
             // @ts-ignore
             else if(typeof sourceData.next === "function") {
@@ -598,10 +698,11 @@ class LazyGenerator {
         let lastStep = this.getIterationStep();
         while(true) {
             const val = lastStep.getNext();
-            if(val == GENERATOR_CONTINUE) {
+            // console.log("Next step value: ", val);
+            if(val === GENERATOR_CONTINUE) {
                 continue;
             }
-            else if(val == GENERATOR_END) {
+            else if(val === GENERATOR_END) {
                 return;
             }
             else {
@@ -616,6 +717,10 @@ class LazyGenerator {
      */
     [Symbol.iterator]() {
         return this.items();
+    }
+
+    allToArray() {
+        return [...this];
     }
 
     /**
@@ -688,6 +793,24 @@ class LazyGenerator {
 
         // @ts-ignore
         this.steps.push(new GeneratorFlatStep(this.lastStep));
+        // @ts-ignore
+        return this;
+    }
+
+    /**
+     * Append the data from a source to the previous output. This requires both are of the same type,
+     * if you want to mix different types consider zip()
+     * 
+     * @param {TItem[]|Iterator<TItem>|GeneratorStep<TItem>|Iterable<TItem>} iterableData 
+     * @returns {typeof this}
+     */
+    cat(iterableData) {
+        if(this.started) {
+            throw new Error("Can't modify in-progress generator");
+        }
+        const inputStream = LazyGenerator.createSourceStep(iterableData, false);
+        // @ts-ignore
+        this.steps.push(new GeneratorCatStep(this.lastStep, inputStream));
         // @ts-ignore
         return this;
     }
