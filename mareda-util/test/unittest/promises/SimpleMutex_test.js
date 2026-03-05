@@ -15,7 +15,7 @@ class ExecMonitor {
      */
     async doStuff(stuffPromise) {
         ++this.parallelCalls;
-        console.log("Parallel = ", this.parallelCalls);
+        //console.log("Parallel = ", this.parallelCalls);
         ++this.totalCalls;
         this.maxParallelCalls = Math.max(this.parallelCalls, this.maxParallelCalls);
         try {
