@@ -9,5 +9,5 @@ type TypeChoice<T extends boolean, TIfTrue, TIfFalse> = T extends true ? TIfTrue
 type DecayExtends<T, X extends T> = T;
 
 interface IterableBytes {
-    [Symbol.asyncIterator]: ()=>AsyncGenerator<Uint8Array<ArrayBuffer>>|ReadableStreamAsyncIterator<Uint8Array<ArrayBuffer>>
+    [Symbol.asyncIterator]: ()=>AsyncIterableIterator<Uint8Array<ArrayBufferLike>>|ReadableStreamAsyncIterator<Uint8Array<ArrayBufferLike>>
 }
