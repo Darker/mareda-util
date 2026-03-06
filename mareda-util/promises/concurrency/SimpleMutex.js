@@ -35,6 +35,8 @@ class SimpleMutex {
 
     /**
      * Execute an operation when it's guaranteed the lock is unlocked
+     * 
+     * Once this function returns, there is no guarantee this is still unlocked
      * @param {()=>void} callback 
      */
     async onUnlocked(callback) {

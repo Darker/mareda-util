@@ -15,7 +15,6 @@ class ConditionVariable {
         // awoken, only the first one
         this.wakeValue = null;
         this.alreadyAwoke = false;
-
     }
 
     /**
