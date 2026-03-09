@@ -6,12 +6,11 @@
 
 
 /**
- * Efficiently compute top N items from an iterable using a scoring function.
- * Uses a fixed-size max-heap to keep only the best N items.
+ * Finds the best N items in the given iterable, where smaller value means better.
  *
  * @template T
  * @param {Iterable<T>} iterable
- * @param {(item: T, index: number) => number} valueFn
+ * @param {(item: T, index: number) => number} valueFn valueFn(badItem) > valueFn(goodItem)
  * @param {number} maxTopItems
  * @returns {TopNItem<T>[]}
  */

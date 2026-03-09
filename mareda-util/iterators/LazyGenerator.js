@@ -724,6 +724,34 @@ class LazyGenerator {
     }
 
     /**
+     * @template {(x:TItem)=>boolean} TPred
+     * @param {TPred} predicate
+     * @returns {boolean}
+     */
+    any(predicate) {
+        for(const x of this) {
+            if(predicate(x)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @template {(x:TItem)=>boolean} TPred
+     * @param {TPred} predicate
+     * @returns {boolean}
+     */
+    all(predicate) {
+        for(const x of this) {
+            if(!predicate(x)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * @template TMapResult
      * @param {(input:TItem)=>TMapResult} mapFunc 
      * @returns {LazyGenerator<TMapResult>}

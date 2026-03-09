@@ -115,4 +115,31 @@ describe("LazyGenerator test", ()=>{
         expect([...gen]).toEqual([2,4]);
     });
 
+    it("any returns true if even is present", ()=>{
+        const gen = LazyGenerator.create([1,2]).cat([3,4]).cat([5]);
+        expect(gen.lastStep.restartable).toBe(true);
+        expect(gen.lastStep.indexable).toBe(true);
+        expect(gen.any(x=>x%2==0)).toBe(true);
+    });
+
+    it("any returns true if even is present", ()=>{
+        const gen = LazyGenerator.create([2,4]).cat([8,4]).map(x=>x+1);
+        expect(gen.lastStep.restartable).toBe(true);
+        expect(gen.lastStep.indexable).toBe(true);
+        expect(gen.any(x=>x%2==0)).toBe(false);
+    });
+
+    it("all returns false if odd is present", ()=>{
+        const gen = LazyGenerator.create([1,2]).cat([3,4]).cat([5]);
+        expect(gen.lastStep.restartable).toBe(true);
+        expect(gen.lastStep.indexable).toBe(true);
+        expect(gen.all(x=>x%2==0)).toBe(false);
+    });
+
+    it("all returns true if even is not present", ()=>{
+        const gen = LazyGenerator.create([2,4]).cat([8,4]).map(x=>x+1);
+        expect(gen.lastStep.restartable).toBe(true);
+        expect(gen.lastStep.indexable).toBe(true);
+        expect(gen.all(x=>x%2==1)).toBe(true);
+    });
 });
