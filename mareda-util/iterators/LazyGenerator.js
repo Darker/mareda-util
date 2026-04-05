@@ -484,7 +484,8 @@ class GeneratorCatStep extends GeneratorStep {
 /**
  * @template TFirstItem
  * @template TSecondItem
- * @extends {GeneratorStep<{first:TFirstItem, second:TSecondItem}>}
+ * @template {true|false} VReturnsTuple
+ * @extends {GeneratorStep<ZipResultValue<VReturnsTuple, TFirstItem, TSecondItem>>}
  */
 class GeneratorZipStep extends GeneratorStep {
     /**
@@ -493,8 +494,9 @@ class GeneratorZipStep extends GeneratorStep {
      * @param {GeneratorStep<TSecondItem>} secondSource 
      * @param {boolean} bothMustExist
      * @param {boolean} tieToFirst if true, iteration ends once first is exhausted
+     * @param {VReturnsTuple | boolean} returnsTuple
      */
-    constructor(firstSource, secondSource, bothMustExist = false, tieToFirst = false) {
+    constructor(firstSource, secondSource, bothMustExist = false, tieToFirst = false, returnsTuple = false) {
         super();
         this.firstSource = firstSource;
         this.secondSource = secondSource;
@@ -507,6 +509,8 @@ class GeneratorZipStep extends GeneratorStep {
 
         this.firstEnded = false;
         this.secondEnded = false;
+
+        this.returnsTuple = returnsTuple;
     }
     // @ts-ignore
     getRestartedClone() {
@@ -519,7 +523,7 @@ class GeneratorZipStep extends GeneratorStep {
     }
     /**
      * 
-     * @returns {{first:TFirstItem, second:TSecondItem}}
+     * @returns {ZipResultValue<VReturnsTuple, TFirstItem, TSecondItem>}
      */
     getNext() {
         const first = this.firstSource.getNextNonContinuing();
@@ -536,14 +540,31 @@ class GeneratorZipStep extends GeneratorStep {
             throw new RangeError("GeneratorZipStep did not obtain a value from both sources but was required to.");
         }
 
-        const result = {first: null, second: null};
-        if(first !== GENERATOR_END) {
-            result.first = first;
+        if(this.returnsTuple) {
+            /** @type {ZipResultValue<true, TFirstItem, TSecondItem>} **/
+            const result = [null, null];
+            if(first !== GENERATOR_END) {
+                result[0] = first;
+            }
+            if(second !== GENERATOR_END) {
+                result[1] = second;
+            }
+            // @ts-ignore
+            return result;
         }
-        if(second !== GENERATOR_END) {
-            result.second = second;
+        else {
+            /** @type {ZipResultValue<false, TFirstItem, TSecondItem>} **/
+            const result = {first: null, second: null};
+            if(first !== GENERATOR_END) {
+                result.first = first;
+            }
+            if(second !== GENERATOR_END) {
+                result.second = second;
+            }
+            // @ts-ignore
+            return result;
         }
-        return result;
+
     }
 }
 
@@ -615,6 +636,20 @@ class GeneratorTransformStep extends GeneratorStep {
         }
         // @ts-ignore
         return GENERATOR_END;
+    }
+}
+
+/**
+ * @template {any} TValue
+ * @param {TValue} value
+ * @returns {value is mtypes.RecordTuple<mtypes.RecordTupleValueType<TValue>>}
+ */
+function isRecordTuple(value) {
+    if(value instanceof Array) {
+        return value.length == 2 && typeof value[0] === "string";
+    }
+    else {
+        return false;
     }
 }
 
@@ -724,6 +759,27 @@ class LazyGenerator {
     }
 
     /**
+     * returns {DictFromItem<TItem>}
+     * @type {DictFromItemMethod<TItem>}
+     */
+    // @ts-ignore
+    allToDict = () => {
+        /** @type {Record<string, mtypes.RecordTupleValueType<TItem>} **/
+        const res = {};
+        for(const tuple of this.items()) {
+            if(isRecordTuple(tuple)) {
+                res[tuple[0]] = tuple[1];
+            }
+            else {
+                throw new TypeError("Cannot create a dict key from current item type.")
+            }
+            
+        }
+        // @ts-ignore
+        return res;
+    }
+
+    /**
      * @template {(x:TItem)=>boolean} TPred
      * @param {TPred} predicate
      * @returns {boolean}
@@ -783,14 +839,37 @@ class LazyGenerator {
      * @param {TSecondItem[]|Iterator<TSecondItem>|GeneratorStep<TSecondItem>|Iterable<TSecondItem>} iterableData 
      * @param {VBothExist} bothMustExist if true an exception is thrown if one ends before the other
      * @param {boolean} tieToFirst if true, iteration ends when the sources if this generator are exhausted, ignoring anything left in second
-     * @returns {LazyGenerator<{first:TItem, second:TypeChoice<VBothExist, TSecondItem, TSecondItem|null>}>}
+     * @returns {LazyGenerator<{first:TItem, second:mtypes.TypeChoice<VBothExist, TSecondItem, TSecondItem|null>}>}
      */
     // @ts-ignore (https://github.com/microsoft/TypeScript/issues/59214)
     zip(iterableData, bothMustExist = false, tieToFirst = false) {
         const firstSource = this.lastStep;
         const secondSource = LazyGenerator.createSourceStep(iterableData, false);
         // @ts-ignore
-        this.steps.push(new GeneratorZipStep(firstSource, secondSource, bothMustExist,tieToFirst));
+        this.steps.push(new GeneratorZipStep(firstSource, secondSource, bothMustExist, tieToFirst, false));
+        // @ts-ignore
+        return this;
+    }
+
+    /**
+     * Zip values as tuples of [first, second]
+     * 
+     * @template TSecondItem
+     * @template {true|false} [VBothExist=false]
+     * @param {TSecondItem[]|Iterator<TSecondItem>|GeneratorStep<TSecondItem>|Iterable<TSecondItem>} iterableData 
+     * @param {VBothExist} bothMustExist if true an exception is thrown if one ends before the other
+     * @param {boolean} tieToFirst if true, iteration ends when the sources if this generator are exhausted, ignoring anything left in second
+     * @returns {LazyGenerator<readonly [TItem, mtypes.TypeChoice<VBothExist, TSecondItem, TSecondItem|null>]>}
+     */
+    // @ts-ignore (https://github.com/microsoft/TypeScript/issues/59214)
+    zipt(iterableData, bothMustExist = false, tieToFirst = false) {
+        if(this.started) {
+            throw new Error("Can't modify in-progress generator");
+        }
+        const firstSource = this.lastStep;
+        const secondSource = LazyGenerator.createSourceStep(iterableData, false);
+        // @ts-ignore
+        this.steps.push(new GeneratorZipStep(firstSource, secondSource, bothMustExist, tieToFirst, true));
         // @ts-ignore
         return this;
     }

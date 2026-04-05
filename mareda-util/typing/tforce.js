@@ -25,6 +25,22 @@ function stringLiteralTuple(t) {
 }
 
 /**
+ * If you just return [2, "bla"], for example, type system
+ * collapses that to (string|number)[]
+ * @type {typeof mtypes.tuple2}
+ */
+function tuple2(t1, t2) {
+    return [t1, t2];
+}
+
+/**
+ * @type {typeof mtypes.tuple3}
+ */
+function tuple3(t1, t2, t3) {
+    return [t1, t2, t3];
+}
+
+/**
  * This is handy if your function has a tempalted bool arg, but also
  * the bool arg has a default.
  * 
@@ -46,6 +62,20 @@ function extendsBool(boolVal) {
     return boolVal;
 }
 
+
+/**
+ * Used to force cast a partial variant of an object
+ * to non partial. Use at your own risk
+ * 
+ * @template {object} T
+ * @param {Partial<T>} partialVal 
+ * @returns {T}
+ */
+function unpartial(partialVal) {
+    // @ts-ignore
+    return partialVal;
+}
+
 export const tforce = {
-    stringLiteral, extendsBool, stringLiteralTuple
+    stringLiteral, extendsBool, stringLiteralTuple, tuple2, tuple3, unpartial
 };

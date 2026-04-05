@@ -6,7 +6,13 @@
         "strictNullChecks": false,
         "strictFunctionTypes": true,
         "module": "NodeNext"
+        
     },
+    "typeRoots": [
+      //"../node_modules/@types",
+      ".",
+      "./typing"
+    ],
     "typeAcquisition": {
         "include": [
             "jasmine"
