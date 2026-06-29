@@ -155,8 +155,8 @@ const gen = LazyGenerator.create("123").flat();
 
 /**
  * @template {true|false} [VReturnsNumber=true]
- * @param {VReturnsNumber} returnsNumber 
- * @returns {TypeChoice<VReturnsNumber, number, string>}
+ * @param {VReturnsNumber & boolean} returnsNumber 
+ * @returns {mtypes.TypeChoice<VReturnsNumber, number, string>}
  */
 function returnByChoice(returnsNumber = true) {
     // @ts-ignore

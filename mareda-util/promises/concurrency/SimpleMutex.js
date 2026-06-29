@@ -58,7 +58,7 @@ class SimpleMutex {
      * @template TRet
      * @param {(reentryHook: object)=>Promise<TRet>} callback 
      * @param {object} [param1]
-     * @param {object} [param1.reentryHook]
+     * @param {object?} [param1.reentryHook]
      */
     async locked(callback, {reentryHook = null} = {}) {
         if(this.allowReentry && reentryHook && this.reentryHook === reentryHook) {

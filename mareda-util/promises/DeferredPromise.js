@@ -35,6 +35,9 @@ class DeferredPromise {
         }
     }
 
+    /**
+     * @returns {Promise<TResult>}
+     */
     async get() {
         if(!this.done) {
             await this.inner;

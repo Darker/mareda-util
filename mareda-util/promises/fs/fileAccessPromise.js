@@ -1,6 +1,6 @@
 ﻿import * as fs from "fs";
 /**
- *
+ * Resolves with true if request access level is granted
  * @param {string|Buffer|URL} name
  * @param {number} mode
  * @returns {Promise<boolean>}
