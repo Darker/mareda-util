@@ -75,6 +75,12 @@ class IdempotentValue {
         }
     }
 
+    invalidate() {
+        this.valueError = null;
+        this.value = null;
+        this.generatedAt = 0;
+    }
+
     hasValue() {
         return this.generatedAt > 0 && (this.lifetimeMs == 0 || this.perf.now() - this.generatedAt < this.lifetimeMs);
     }
